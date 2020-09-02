@@ -3,7 +3,7 @@
 # Shopify Data Science Challenge
 
 # Loading Packages and setting up directory
-x <- c("dplyr","gsheet","plotly")
+x <- c("dplyr","gsheet","plotly","lubridate")
 lapply(x,require,character.only=T)
 
 # Reading Data directly from the Shopify googlesheet to the table
@@ -59,7 +59,8 @@ df_78 <- df %>% dplyr::filter(shop_id == 78)
 n_distinct(df_78$shop_id) #1
 mean(df_78$order_amount) # 49213.04
 sd(df_78$order_amount) # 26472.23
-# After analyzing 
+# After analyzing, it seems like 78 shop is selling sneakers at much higher price
+# This is not specific to a user like in case of shop ID 42
 
 # Now's lets study the outliers
 # 42
@@ -73,6 +74,17 @@ sd(df_42$order_amount) # 334860.6
 # Transaction always occur at 4 AM
 # Payment mode is always Credit Card
 # If we exclude 607, then the new mean is 652.2353 and std dev is 358.6817 which is reasonable
+
+#######################################################################################
+#######   Lets calculate more metrics on this data
+#######################################################################################
+
+df$datetime <- lubridate::ymd_hms(df$created_at)
+
+# Metric 1 : Weekly average Sales
+
+
+
 
 
 
