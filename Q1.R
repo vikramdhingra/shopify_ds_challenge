@@ -81,10 +81,12 @@ sd(df_42$order_amount) # 334860.6
 
 df$datetime <- lubridate::ymd_hms(df$created_at)
 
-# Metric 1 : Weekly average Sales
+# Metric 1 : Weekly total Sales,Weekly average Sales, Week over Week avg sales
+df$week <- week(df$datetime)
+df_week_summary <- df %>% group_by(week) %>% summarise(Sales_Total=sum(order_amount),Sales_avg=mean(order_amount)) %>% arrange(week) %>%
+  mutate(Week_diff = Sales_avg - lag(Sales_avg, default = first(Sales_avg))) %>% mutate(WoW=Week_diff/Sales_avg)
 
 
-
-
+# Metric 2: Total/ Average Orders and Total/ Average Items 
 
 
