@@ -17,6 +17,9 @@ LIMIT 1
 -- Peacock   	40
 
 -- A3
+-- There is ambiguity with regards to the product orders. There can two scenarios:
+-- 1.	We sum the Quantity and group the product for Germany orders. If we follow this approach; below is the query and result
+
 SELECT C.ProductName,
        C.ProductID,
        COUNT(A.OrderID) AS total_order,
@@ -32,6 +35,8 @@ LIMIT 1
 
 -- ProductName	        ProductID	total_order	Product_quant
 -- Boston Crab Meat	    40	        4	        160
+
+-- 2.	We count order and group the the product for Germany orders. If we follow this approach; below is the query and result
 
 SELECT C.ProductName,
        C.ProductID,
