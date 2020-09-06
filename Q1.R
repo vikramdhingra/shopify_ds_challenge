@@ -3,6 +3,7 @@
 # Shopify Data Science Challenge
 
 # Loading Packages and setting up directory
+rm(list = ls())
 x <- c("dplyr","gsheet","plotly","lubridate")
 lapply(x,require,character.only=T)
 
@@ -21,6 +22,7 @@ sd(df$order_amount) # 41282.54
 #It is too high, lets plot the data
 hist(log(df$order_amount))
 plot_ly(x = ~df$order_amount, type = "histogram")%>% layout(title="Histogram of Order Amount")
+# Taking LOG to handle skewness
 plot_ly(x = ~log(df$order_amount), type = "histogram")%>% layout(title="Histogram of LOG Order Amount")
 
 # Certainly there are outliers in the data. Let us investigate this
@@ -70,7 +72,7 @@ n_distinct(df_42$shop_id) #1
 mean(df_42$order_amount) # 235101.5
 sd(df_42$order_amount) # 334860.6
 
-# After analyzing the result, it seems USER ID 607 is fraud or some bug or TEST user
+# After analyzing the result, it seems USER ID 607 is fraud or some bug or TEST user or BULK BUYER
 # Transaction always occur at 4 AM
 # Payment mode is always Credit Card
 # If we exclude 607, then the new mean is 652.2353 and std dev is 358.6817 which is reasonable
@@ -81,12 +83,15 @@ sd(df_42$order_amount) # 334860.6
 
 df$datetime <- lubridate::ymd_hms(df$created_at)
 
-# Metric 1 : Weekly total Sales,Weekly average Sales, Week over Week avg sales
+# Metric 1 : Weekly total Sales (Order Amount),Weekly average Sales, Week over Week avg sales
 df$week <- week(df$datetime)
 df_week_summary <- df %>% group_by(week) %>% summarise(Sales_Total=sum(order_amount),Sales_avg=mean(order_amount)) %>% arrange(week) %>%
   mutate(Week_diff = Sales_avg - lag(Sales_avg, default = first(Sales_avg))) %>% mutate(WoW=Week_diff/Sales_avg)
 
 
-# Metric 2: Total/ Average Orders and Total/ Average Items 
-
-
+# Metric 2: Sales KPI for ShopID
+df_shop_summary <- df %>% group_by(shop_id) %>% summarise(Sales_total_amount=sum(order_amount),
+                                                          Sales_avg_order_amnt=mean(order_amount),
+                                                          Sales_total_vol=sum(total_items),
+                                                          Sales_avg_order_vol=mean(total_items))
+# From the above KPIs we will easily detect outlier and trend
